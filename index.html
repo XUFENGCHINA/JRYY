@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<title>同窗大冒险 · 角色选择</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff77aa;--crimson:#cc004c;--orange:#f86000;--yellow:#ffd23f;
+    --green:#00e436;--blue:#29adff;--gray:#83769c;--dark:#0f0b1f;
+    --panel:#241b3a;--panel-2:#181229;--line:#4a3b6b;--cream:#fff3d6;--black:#000;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:'ZCOOL QingKe HuangYou','Press Start 2P',monospace;color:var(--cream);
+    background:linear-gradient(180deg,#2a1a5e,#4a2a86 30%,#7a4a9e 55%,#ca7a4a 80%,#f8c060 100%);
+    min-height:100vh;overflow-x:hidden;position:relative;image-rendering:pixelated;}
+  a{color:inherit;text-decoration:none;}
+  img{image-rendering:pixelated;}
+
+  .scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .sun{position:absolute;top:14%;right:12%;width:70px;height:70px;background:var(--yellow);
+    box-shadow:0 -24px 0 -2px var(--yellow),0 24px 0 -2px var(--yellow),-24px 0 0 -2px var(--yellow),24px 0 0 -2px var(--yellow),
+      -24px -24px 0 -2px var(--yellow),24px -24px 0 -2px var(--yellow),-24px 24px 0 -2px var(--yellow),24px 24px 0 -2px var(--yellow);
+    animation:bob 4s steps(2) infinite;}
+  @keyframes bob{50%{transform:translateY(6px);}}
+  .cloud{position:absolute;display:flex;flex-wrap:wrap;width:150px;height:36px;}
+  .cloud i{width:18px;height:18px;background:rgba(255,255,255,.92);}
+  .cloud i:nth-child(odd){background:rgba(255,220,200,.9);}
+  .c1{top:20%;left:6%;animation:move 40s linear infinite;}
+  .c2{top:35%;left:60%;animation:move 55s linear infinite reverse;}
+  @keyframes move{from{transform:translateX(-20vw);}to{transform:translateX(110vw);}}
+  .hills{position:absolute;bottom:0;left:0;right:0;height:40%;}
+  .hills .g1{position:absolute;bottom:-10px;width:100%;height:52%;background:linear-gradient(180deg,#1f7a4a,#125b35);
+    clip-path:polygon(0 60%,12% 20%,26% 55%,42% 10%,60% 50%,76% 22%,90% 52%,100% 30%,100% 100%,0 100%);}
+  .hills .g2{position:absolute;bottom:-10px;width:100%;height:40%;background:linear-gradient(180deg,#2a9a5c,#1a6b40);
+    clip-path:polygon(0 55%,18% 18%,36% 50%,55% 8%,74% 45%,88% 20%,100% 48%,100% 100%,0 100%);opacity:.7;}
+
+  .topbar{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--panel);border-bottom:4px solid var(--line);}
+  .topbar .logo{font-family:'Press Start 2P';font-size:13px;color:var(--yellow);letter-spacing:1px;}
+  .topbar .nav a{font-size:14px;color:var(--cream);padding:8px 12px;background:var(--panel-2);border:3px solid var(--line);margin-left:8px;}
+  .topbar .nav a:hover{background:var(--orange);color:var(--dark);}
+
+  .wrap{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 16px;}
+  .title-screen{padding:56px 0 30px;text-align:center;}
+  .title-screen .logo-big{font-family:'Press Start 2P';font-size:clamp(22px,6vw,44px);line-height:1.3;color:var(--yellow);text-shadow:5px 5px 0 var(--crimson),10px 10px 0 var(--black);letter-spacing:2px;margin-bottom:8px;}
+  .title-screen .logo-big .cn{display:block;font-family:'ZCOOL QingKe HuangYou';font-size:clamp(34px,9vw,66px);color:var(--cream);text-shadow:5px 5px 0 var(--crimson),9px 9px 0 var(--black);margin-top:8px;}
+  .title-screen .sub{font-family:'Press Start 2P';font-size:clamp(10px,2.4vw,14px);color:var(--green);letter-spacing:2px;margin-top:18px;}
+  .title-screen .sub span{display:inline-block;animation:blink 1s steps(2) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .score{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:var(--panel);border:3px solid var(--line);padding:8px 14px;font-size:14px;}
+  .score b{color:var(--yellow);font-family:'Press Start 2P';font-size:12px;}
+
+  .select-label{margin:26px 0 16px;display:flex;align-items:center;gap:10px;}
+  .select-label .mark{font-family:'Press Start 2P';font-size:12px;color:var(--cream);background:var(--crimson);padding:6px 10px;border:3px solid var(--black);}
+  .select-label::after{content:"";flex:1;height:4px;background:var(--line);}
+  .select-label .cn-label{font-size:16px;color:var(--cream);}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;padding-bottom:40px;}
+  .char-card{position:relative;background:var(--panel);border:4px solid var(--line);padding:16px 16px 18px;cursor:pointer;transition:transform .12s steps(2),background .15s;display:block;}
+  .char-card::before{content:"";position:absolute;inset:3px;border:2px solid rgba(255,255,255,.05);pointer-events:none;}
+  .char-card:hover{transform:translateY(-6px);background:var(--panel-2);border-color:var(--yellow);}
+  .char-card:active{transform:translateY(0);}
+
+  .lv{position:absolute;top:12px;right:12px;z-index:2;font-family:'Press Start 2P';font-size:10px;color:var(--dark);background:var(--yellow);padding:6px 8px;border:3px solid var(--black);}
+  .frame{position:relative;width:110px;height:110px;margin:0 auto 14px;background:var(--blue);border:4px solid var(--black);overflow:hidden;}
+  .frame img{width:100%;height:100%;object-fit:cover;display:block;}
+  .frame::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 2px,transparent 2px 4px);pointer-events:none;}
+
+  .char-name{text-align:center;font-family:'ZCOOL QingKe HuangYou';font-size:28px;color:var(--cream);margin-top:4px;}
+  .char-title{text-align:center;font-size:14px;color:var(--pink);margin-top:2px;letter-spacing:1px;}
+  .char-role{text-align:center;font-size:13px;color:var(--gray);margin-top:6px;line-height:1.5;min-height:40px;}
+
+  .stats{margin:12px 0 0;display:flex;flex-direction:column;gap:8px;}
+  .stat{display:flex;align-items:center;gap:8px;font-size:13px;}
+  .stat .k{font-family:'Press Start 2P';font-size:9px;color:var(--gray);width:52px;}
+  .stat .bar{flex:1;height:16px;background:var(--black);border:2px solid var(--line);display:flex;}
+  .stat .bar i{flex:1;border-right:2px solid var(--panel);}
+  .stat .bar i.on{background:var(--green);}
+  .stat .bar i.off{background:var(--panel-2);}
+  .stat.hp .bar i.on{background:var(--pink);}
+  .stat.atk .bar i.on{background:var(--orange);}
+  .stat.def .bar i.on{background:var(--blue);}
+  .stat .v{font-family:'Press Start 2P';font-size:10px;color:var(--cream);width:34px;text-align:right;}
+
+  .go{display:block;margin-top:14px;text-align:center;font-size:15px;color:var(--dark);background:var(--orange);padding:9px 0;border:3px solid var(--black);letter-spacing:2px;}
+  .char-card:hover .go{background:var(--yellow);}
+  .go span{font-family:'Press Start 2P';font-size:9px;}
+
+  .hint{text-align:center;font-size:14px;color:var(--gray);margin-top:8px;padding-bottom:30px;}
+  .hint em{color:var(--yellow);font-style:normal;}
+
+  @media(max-width:540px){.cards{grid-template-columns:repeat(2,1fr);gap:14px;}.frame{width:96px;height:96px;}.char-name{font-size:24px;}.topbar .nav a{display:none;}}
+  @media(max-width:360px){.cards{grid-template-columns:1fr;}.frame{width:120px;height:120px;}.char-role{min-height:auto;}}
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="sun"></div>
+  <div class="cloud c1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="cloud c2"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="hills"><div class="g1"></div><div class="g2"></div></div>
+</div>
+
+<div class="topbar">
+  <div class="logo">★ TONGCHUANG</div>
+  <div class="nav"><a href="#select">选择角色</a></div>
+</div>
+
+<div class="wrap">
+  <div class="title-screen">
+    <div class="logo-big">ADVENTURE<span class="cn">同窗大冒险</span></div>
+    <div class="sub">- PRESS START <span>▶</span> -</div>
+    <div class="score">收录人数 <b id="count">0</b> 人</div>
+  </div>
+
+  <div class="select-label" id="select">
+    <div class="mark">CHARACTER SELECT</div>
+    <div class="cn-label">选择你的同窗</div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="hint">💡 想加同学？在 <em>&lt;script&gt;</em> 的 <em>students</em> 数组里加一项即可。</div>
+</div>
+
+<script>
+// ============================================================
+//  同窗名册 — 加同学只需在数组加一项
+//  name: 姓名  page: 页面  title: 称号  role: 介绍
+//  stats:{hp,atk,def}(0-10)  tag:等级  avatar: 像素图(留空自动印章小人)
+// ============================================================
+var students = [
+  { name:'JR', page:'jr.html', title:'御前学霸·全职长工',
+    role:'学富五车，为师所倚；任劳任怨，分文未见。',
+    stats:{hp:10,atk:9,def:10}, tag:10,
+    avatar:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfqCB4EDR/EEiJNAAAFN0lEQVQ4yy2Ty2+cZxnFz/M873efGY894/jWpokvaSJKQALRFCEBCxYg/gGW/EHdsemSRVWpUlFbqMpNRaqKmtIWaESbONiJL7EnzozjuX33730fFmZ5FufoHOl36I3f/kGJRUTLdPDgn66cX9+6EffWLYnAMYEBJiUoAUQAQCACiJThoEoKEEzkMbPYMq3S52urq71uy4/axheoY2LAioIvrVACASC4y0QGQXGZbdrG+r48PjzQMt3cuh4lCRGxLYkIUEBFWJ0jghARlEBESlDgUqlCQWQWAlc3s07seVGbZs85n/qLXTIeEUQ4YFRlFbUi57QqC8NMUCJAFdDLOqoKIhORTacX671Ok80nZ4O42wq5S6yuKqus+OjuZ+lo+O3btztxsvHihhgPrgbR5VYHVQWUVGEGh4dJK5K6ODt5srP1YrK0CFBTFe98+Ke/ffblJC0D33vv7r1X1vu//uVPtm9uN15ISkQgqAIOUCIFOJtNOpH/eG9/sb/Y6sasFdX5m+9/8O4n/5iWTRCGTtFO4qNJ/pu33n92dBwb3wd8gkfwiQLAhwZwfGN7TaiJW36vG2lZdcPw3/d33/7LxwQwU9PUjW18I1eXF690O5EH33MspXBluBKuRBrDzrDyYmCoSNcXkpYg9k2eTX/3109EjHOuqRuoikg7TuIwXO4vHw0nk4thaGBgPVKPnUeNUClcMarUd2U7kiTyW6F9sLe7dzTwPQ/OMRERiUi/FV1JYrD586f3T58N40VfYhGfWJRgjSpD2c7HkVTX1uLEzz3Ob11bun19jR34//jCE2Fw45wSwih8+vQCtiGtFCXIigdj1IM1nnC7E1V5pQSjrht6S4HHSizkG765dsUXrxOFgCpIVI73T+fnm2FgrCqBoESOyCkbUaeW1LoyF3bT0fkvXrvxrY2uLct5Vj2bpgpYZxXwFC/35Ec/eMmEYgXKTqlhW8OWisbURZG0/TrPpKltWrcS78d3tpcXvK/3Tr98OPjgq+NWFPXakTrHrrlzZ3Pz+zcyZ8iLCKS20fkUVcl1bdqRh6q0eVoUxcVzXbm6mM5mO1vLt15e/dXPm813vrj3KCdVgAKhZLVTqCKI1PO1nGk+RllRXau1pphlvuEyLx4fDdfXF0NXl7WrSjjh/45mtWNVy8JN6VZWo05sXTFRV7GsKgCbU5WhslqTOT0ZXVvvPXk6zUvbj+PBwXQhDtg4L5DX3/r8o93Tfie6Ou/eXO6vtOAFpopC7r1iuq/BThv6veb7NM+LUWEu5pk8NWeTqpckH39zvpr4put3Yu+PXx19cTDstQIoDkdjdXU1Q52nP/vpdl0nuvQdnQ+aRw95lOdjl+ViOOx9fjzMrQ4LfqHbZS8cV2b3fP7G3x+ysIJU1TPmfF4UObfun/1wayOc/qs+3tOikOdZmcv5pCk4ku9999XxeBQJOOwMK3syqzInH977+j+Ds0tEiBlQw+wx5ZaDplxR3xZpM8lODoqDUb47yr4ZpnJro7+TuJ2l5KykvYsstbQ/HH36YLdSZx1AxMxMTACchd8OjcbggzN3cVEdzjG19rySce1kZ2NlVLhBSU/GaZqXrHo2HJxMJsLSCXxitpdXYtLL5wVJP3CBb/Yvpkfjc6AaZ+m0SA2MX1h7Mp7OawgJ1fOiyJTlhYVWNwpOJtm8qp2zyuKY1darseknuhHNs6J5MteztIqYfFXT40bRWIg6mWSzV9fDewU/FuMb8+h8Vjs1zFCoqsd8dSGc1Hg4prvH02ellpa6IV0JuHb2fyQl+I1xpa9mAAAAAElFTkSuQmCC' },
+  { name:'YY', page:'yy.html', title:'元老发小·早期学霸',
+    role:'幼儿园同窗，小学成绩稳压JR。一朝被反超，看发小当苦力。',
+    stats:{hp:8,atk:10,def:7}, tag:9,
+    avatar:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAGtUExURb29vf///+np6ePj4+3t7fPz8+Dg4N7e3t/f3+Xl5ejo6MDAwPb29vj4+OTk5Pr6+u/v7/f39/Hx8fT09P7+/v39/Q8PD5eXl8XFxc7Oztvb2+rq6t3d3dfX1/v7++vr69ra2ufn5yQkJJKSkvn5+e7u7re3t/X19fLy8uHh4czMzPDw8NTU1NbW1ra2tuzs7MvLy7Ozs/z8/NnZ2aSkpKCgoK+vr9XV1cnJycfHx8bGxmtra3Z2dnNzc01NTc3NzdDQ0NLS0pmZmVBQUDExMTs7OxISEiUlJebm5tjY2MLCwp+fn3p6eqioqNzc3KWlpVdXV7+/v6enpzU1Naurq7m5uZycnI+Pj4WFhbCwsLS0tNPT05GRkYaGhuLi4pqamn19faOjo62trbq6umZmZry8vJ6enmFhYampqb6+vsHBwcrKypCQkGlpacTExIeHh2JiYrOztJaWloGBgXFxcXBwcJ2dnRMTE0dHR5SUlYqKij4+PoyMjGxsbLi4uB4eHgICAqampm1tbZOTk3JycmhoaLW1tcPDw4ODg2BgYJiYmG9vb8/Pz1hYWIKCghJ8iTkAAAABYktHRAH/Ai3eAAAAB3RJTUUH6ggeBA0fxBIiTQAAABBjYU52AAAAHQAAAB0AAAACAAAAAmlcdmIAAAIjSURBVCjPBcGJQ9JQHADg9xtjD9be28beEhiMLTeHbDQaJQimkB2IRZGaZoqlaZLZnZWV3ffxN/d9CAEX4+MCTiTFYxKhsqKmREFjOjo+QuMkjTKZrJFjecUsEGrZtgroxCgwJ8bLmHBucow4tmpTrqAAioOp8gLxuOJ4sWQUfSMoE4NSQCexEdoBCROYKo4JIa7EWVwIXXQqQ4qGRa0MiUww5Sw21OrpMxNjKFnTJFUQx+tiYrLBpUKOjTanzjanUXZG9pjvyilfaVlt7FqVc7PnL1y8hHCHSdEc7kTFnN2dv3wl3bs6bZlT11DV1Anr9yXM0VZ4fWFxybgx2wuXV1CvpjHt5mpJp/VbML6WrjXQ9Dy3so5qg4HjrXY28pIb9BgX96vV21P+nU20lRPEQiKGJ6qUurrOVCdYvZtJzaHtzTzOZPPWoKADYzoDVdu5N1pqoN3usHJ/c08zXZ7JUbINuio82H/YRqEqMcVKi5BtkVRs+EhW+rD7eHkJ7TTBATosQWxh/snT9S4824ax5y8O0MtXEQEv8vteYun1yBAO30DUfvvuCL0PIBoQpucSFudLsP7hI3SKG58+owNQaMeFSAdaCcJ6swG6ALv7K4gUscRJoEu+wXWPcvWtEAK+/OUr8mNqgqY0SXGNfmuvV/mGuO9t7cdPJEqh7RDPDecmcbZRblV+HXTysPYbgSeTQc/gI/6Plg8y5ezfxWQZDv/9B9vVXj5ruRBjAAAAAElFTkSuQmCC' }
+];
+
+function bars(v){var h='';for(var k=0;k<10;k++){h+='<i class="'+(k<v?'on':'off')+'"></i>';}return h;}
+function sealAvatar(ch){
+  var c=document.createElement('canvas');c.width=32;c.height=32;
+  var x=c.getContext('2d');x.imageSmoothingEnabled=false;
+  var cols=['#cc004c','#f86000','#29adff','#00a85a','#ff77aa'];
+  x.fillStyle=cols[(ch.charCodeAt(0)||0)%cols.length];x.fillRect(0,0,32,32);
+  x.fillStyle='#000';x.fillRect(0,0,32,3);x.fillRect(0,29,32,3);x.fillRect(0,0,3,32);x.fillRect(29,0,3,32);
+  x.fillStyle='#fff3d6';x.font='bold 20px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(ch,16,17);
+  return c.toDataURL();
+}
+
+function renderCards(){
+  var el=document.getElementById('cards');
+  var html='';
+  for(var i=0;i<students.length;i++){
+    var s=students[i];
+    var imgSrc=s.avatar?s.avatar:sealAvatar(s.name.trim().charAt(0));
+    html+=
+      '<a class="char-card" href="'+s.page+'">'+
+        '<div class="lv">LV '+s.tag+'</div>'+
+        '<div class="frame"><img src="'+imgSrc+'" alt="'+s.name+'"></div>'+
+        '<div class="char-name">'+s.name+'</div>'+
+        '<div class="char-title">'+s.title+'</div>'+
+        '<div class="char-role">'+s.role+'</div>'+
+        '<div class="stats">'+
+          '<div class="stat hp"><span class="k">HP</span><div class="bar">'+bars(s.stats.hp)+'</div><span class="v">'+s.stats.hp+'0</span></div>'+
+          '<div class="stat atk"><span class="k">学霸</span><div class="bar">'+bars(s.stats.atk)+'</div><span class="v">'+s.stats.atk+'0</span></div>'+
+          '<div class="stat def"><span class="k">苦力</span><div class="bar">'+bars(s.stats.def)+'</div><span class="v">'+s.stats.def+'0</span></div>'+
+        '</div>'+
+        '<div class="go">进入角色 <span>▶</span></div>'+
+      '</a>';
+  }
+  el.innerHTML=html;
+  document.getElementById('count').textContent=students.length;
+}
+renderCards();
+</script>
+</body>
+</html>
